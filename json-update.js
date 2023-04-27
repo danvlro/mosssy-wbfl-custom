@@ -1,9 +1,7 @@
-
-
 //Getting the supplier name
-const supH1 = document.getElementById('supplier-name').innerHTML;
+const supID = document.getElementById('supplier-ID').innerHTML;
 //Transforming the supplier name to lowercase & erasing "
-const supplierName = supH1.toLowerCase().replaceAll('"', '');
+const supplierIdentifier = supID.toLowerCase().replaceAll('"', '');
 //Getting the div that holds the saved icons
 const statusIcon = document.getElementById('status-icon');
 //Getting the icon for not saved suppliers
@@ -16,7 +14,7 @@ let jsonData
 async function fetchData() {
     const memberData = await window.$memberstackDom.getMemberJSON();
     //Getting the data and converting it to a string
-    const dataDotSaved = JSON.stringify(memberData.data.saved); 
+    const dataDotSaved = memberData.data.saved; 
 
     //Getting the whole JSON data
     //Moving data globaly
@@ -25,21 +23,12 @@ async function fetchData() {
     let shouldShowDiv = false;
 
     for (var i = 0; i < dataDotSaved.length; i++) {
-		 console.log(dataDotSaved[i])
-     console.log(supplierName)
-     if (supplierName === dataDotSaved[i]) {
+     if (supplierIdentifier === dataDotSaved[i]) {
        shouldShowDiv = true;		
-			 //console.log('TRU!')
        break;
       }else{
-      //console.log('NOPE')
       }
     }
-    
-    console.log('shouldShowDiv= ' + shouldShowDiv)
-
-    // //Deciding if we should show the icon or not
-    // const shouldShowDiv = (dataDotSaved === supplierName) ? true : false;
     
     //Adding or removing the icon
     if (shouldShowDiv) {
@@ -48,38 +37,67 @@ async function fetchData() {
     } else {
     statusIcon.classList.add('not-saved-icon');
     statusIcon.classList.remove('saved-icon');
-   }
+    }
 
-     // Saving this supplier's name when save btn is clicked
-    const notSavedIcon = document.querySelector('.not-saved-icon');
+   
     // Listen for clicks on the icon with the not-saved-icon class
-    notSavedIcon.addEventListener('click', () => {
-    
-    // Changing the class to saved-icon  
-    statusIcon.classList.add('not-saved-icon');
-    statusIcon.classList.remove('saved-icon');  
-    
-    // Check if "saved" key exists in jsonData, if not, create a new key with an empty array as its value
-    if (!jsonData.hasOwnProperty("saved")) {  
-    jsonData.saved = [];
-    }
+    statusIcon.addEventListener('click', () => {
 
-    // If "saved" is not an array, convert it into an array
-    if (!Array.isArray(jsonData.saved)) {
-    jsonData.saved = [jsonData.saved];
-    }
+    if (statusIcon.classList.contains('not-saved-icon')) {
+      
+      // Changing the class to saved-icon  
+      statusIcon.classList.remove('not-saved-icon');
+      statusIcon.classList.add('saved-icon');  
+      
+      // Check if "saved" key exists in jsonData, if not, create a new key with an empty array as its value
+      if (!jsonData.hasOwnProperty("saved")) {  
+      jsonData.saved = [];
+      }
 
-    // Add newValue to the array associated with the "saved" key
-    jsonData.saved.push(supplierName);  
+      // If "saved" is not an array, convert it into an array
+      if (!Array.isArray(jsonData.saved)) {
+      jsonData.saved = [jsonData.saved];
+      }
 
-    //Updating the JSON with the new data
-    window.$memberstackDom.updateMemberJSON({
-    	json: {
-      	"saved": jsonData.saved
+      // Add newValue to the array associated with the "saved" key
+      jsonData.saved.push(supplierIdentifier);  
+
+      //Updating the JSON with the new data
+      window.$memberstackDom.updateMemberJSON({
+      	json: {
+        	"saved": jsonData.saved
+          }
+      	}); 
+
+    } else {
+
+      // Changing the class to saved-icon  
+      statusIcon.classList.remove('saved-icon');
+      statusIcon.classList.add('not-saved-icon');
+
+      //Getting the saved values
+      const savedValues = Object.values(dataDotSaved);
+      //Storing the new saved values
+      const valuesToKeep = []
+     
+      //Keeping just the values that are not from this supplier
+      for (let i = 0; i < savedValues.length; i++) {
+        if(savedValues[i] !== supplierIdentifier) {
+          valuesToKeep.push(savedValues[i])
+        
+        } else {
+          break;
         }
-    	});
-    })  
-
+      }
+			
+      // Updating the JSON data
+      window.$memberstackDom.updateMemberJSON({
+        json: {
+          "saved": valuesToKeep
+        }
+      });	
+    } 
+    }) 
  }
  
 fetchData()
