@@ -83,11 +83,10 @@ async function fetchData() {
       //Keeping just the values that are not from this supplier
       for (let i = 0; i < savedValues.length; i++) {
         if(savedValues[i] !== supplierIdentifier) {
+        	console.log('not the same' + savedValues[i] + supplierIdentifier)
           valuesToKeep.push(savedValues[i])
         
-        } else {
-          break;
-        }
+        } 
       }
 			
       // Updating the JSON data
