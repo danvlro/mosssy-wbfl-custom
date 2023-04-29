@@ -16,29 +16,37 @@ async function fetchData() {
     //Getting the data and converting it to a string
     const dataDotSaved = memberData.data.saved; 
 
-    //Getting the whole JSON data
-    //Moving data globaly
-    jsonData = memberData.data;
-    //Checking if the supplier is already saved
-    let shouldShowDiv = false;
+		if (dataDotSaved === undefined) {
+      window.$memberstackDom.updateMemberJSON({
+        json: {
+          "saved": []
+          }
+        });
+    } else {
+    	
+      //Getting the whole JSON data
+      //Moving data globaly
+      jsonData = memberData.data;
+      //Checking if the supplier is already saved
+      let shouldShowDiv = false;
 
-    for (var i = 0; i < dataDotSaved.length; i++) {
-     if (supplierIdentifier === dataDotSaved[i]) {
-       shouldShowDiv = true;		
-       break;
-      }else{
+      for (var i = 0; i < dataDotSaved.length; i++) {
+       if (supplierIdentifier === dataDotSaved[i]) {
+         shouldShowDiv = true;		
+         break;
+        }else{
+        }
+      }
+
+      //Adding or removing the icon
+      if (shouldShowDiv) {
+      statusIcon.classList.add('saved-icon');
+      statusIcon.classList.remove('not-saved-icon');
+      } else {
+      statusIcon.classList.add('not-saved-icon');
+      statusIcon.classList.remove('saved-icon');
       }
     }
-    
-    //Adding or removing the icon
-    if (shouldShowDiv) {
-    statusIcon.classList.add('saved-icon');
-    statusIcon.classList.remove('not-saved-icon');
-    } else {
-    statusIcon.classList.add('not-saved-icon');
-    statusIcon.classList.remove('saved-icon');
-    }
-
    
     // Listen for clicks on the icon with the not-saved-icon class
     statusIcon.addEventListener('click', () => {
@@ -77,8 +85,10 @@ async function fetchData() {
 
       //Getting the saved values
       const savedValues = Object.values(dataDotSaved);
+      console.log('savedValues is; ' + savedValues);
       //Storing the new saved values
       const valuesToKeep = []
+      console.log('Should return one value; ' + valuesToKeep);
      
       //Keeping just the values that are not from this supplier
       for (let i = 0; i < savedValues.length; i++) {
@@ -90,6 +100,7 @@ async function fetchData() {
       }
 			
       // Updating the JSON data
+      console.log('valuesToKeep is; ' + valuesToKeep + 'before updating the value');
       window.$memberstackDom.updateMemberJSON({
         json: {
           "saved": valuesToKeep
