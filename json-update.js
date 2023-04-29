@@ -16,17 +16,18 @@ async function fetchData() {
     //Getting the data and converting it to a string
     const dataDotSaved = memberData.data.saved; 
 
+    //If nothing saved, create an empty array for 'saved'
 		if (dataDotSaved === undefined) {
       window.$memberstackDom.updateMemberJSON({
         json: {
           "saved": []
           }
-        });
+      });
     } else {
     	
-      //Getting the whole JSON data
-      //Moving data globaly
+      //Getting saved JSON data and making it accessible globally 
       jsonData = memberData.data;
+
       //Checking if the supplier is already saved
       let shouldShowDiv = false;
 
@@ -34,17 +35,16 @@ async function fetchData() {
        if (supplierIdentifier === dataDotSaved[i]) {
          shouldShowDiv = true;		
          break;
-        }else{
         }
       }
 
       //Adding or removing the icon
       if (shouldShowDiv) {
-      statusIcon.classList.add('saved-icon');
-      statusIcon.classList.remove('not-saved-icon');
+        statusIcon.classList.add('saved-icon');
+        statusIcon.classList.remove('not-saved-icon');
       } else {
-      statusIcon.classList.add('not-saved-icon');
-      statusIcon.classList.remove('saved-icon');
+        statusIcon.classList.add('not-saved-icon');
+        statusIcon.classList.remove('saved-icon');
       }
     }
    
@@ -59,17 +59,17 @@ async function fetchData() {
       
       // Check if "saved" key exists in jsonData, if not, create a new key with an empty array as its value
       if (!jsonData.hasOwnProperty("saved")) {  
-      jsonData.saved = [];
+        jsonData.saved = [];
       }
 
       // If "saved" is not an array, convert it into an array
       if (!Array.isArray(jsonData.saved)) {
-      jsonData.saved = [jsonData.saved];
+        jsonData.saved = [jsonData.saved];
       }
-
-      // Add newValue to the array associated with the "saved" key
-      jsonData.saved.push(supplierIdentifier);  
-
+      
+      //Pushing this supplier value to saved ones
+      jsonData.saved.push(supplierIdentifier);
+      
       //Updating the JSON with the new data
       window.$memberstackDom.updateMemberJSON({
       	json: {
@@ -85,17 +85,18 @@ async function fetchData() {
 
       //Getting the saved values
       const savedValues = Object.values(dataDotSaved);
-      console.log('savedValues is; ' + savedValues);
+
       //Storing the new saved values
       const valuesToKeep = []
-      console.log('Should return one value; ' + valuesToKeep);
      
+      //Setting 
+      jsonData.saved = []
+
       //Keeping just the values that are not from this supplier
       for (let i = 0; i < savedValues.length; i++) {
-        if(savedValues[i] !== supplierIdentifier) {
-        	console.log('not the same' + savedValues[i] + supplierIdentifier)
+        if (savedValues[i] !== supplierIdentifier) {
           valuesToKeep.push(savedValues[i])
-        
+          jsonData.saved.push(savedValues[i])
         } 
       }
 			
